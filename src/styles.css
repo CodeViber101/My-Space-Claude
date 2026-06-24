@@ -49,7 +49,9 @@ body {
 .qnav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
 .qnav select {
@@ -355,4 +357,234 @@ button:disabled {
   .board {
     grid-template-columns: 1fr;
   }
+}
+
+/* ── Toolbar (mode / language / sound / edit) ───────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.seg {
+  display: inline-flex;
+  background: #0d1f4d;
+  border: 2px solid #ffffff22;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.seg button {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 14px;
+}
+
+.seg button.active {
+  background: var(--gold);
+  color: #0a1a3f;
+  font-weight: 800;
+}
+
+.toggle {
+  padding: 8px 12px;
+}
+
+.toggle.active {
+  background: var(--gold);
+  color: #0a1a3f;
+  font-weight: 700;
+  border-color: var(--gold);
+}
+
+/* Locked slots in single-player mode */
+.slot.locked {
+  cursor: default;
+}
+
+.slot.locked:not(.open) {
+  opacity: 0.92;
+}
+
+/* ── Single-player bar ──────────────────────────────────────── */
+.solobar {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.solo-score {
+  font-size: 1.2rem;
+}
+
+.solo-score strong {
+  color: var(--gold);
+  font-size: 1.5rem;
+}
+
+.guess-form {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.guess-input {
+  flex: 1;
+  background: #0d1f4d;
+  border: 2px solid #ffffff33;
+  border-radius: 10px;
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 1.05rem;
+}
+
+.guess-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.guess-input.hit {
+  border-color: var(--green);
+  animation: pulse 0.4s ease;
+}
+
+.guess-input.miss {
+  border-color: var(--danger);
+  animation: shake 0.4s ease;
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 6px #36c27544;
+  }
+}
+
+.guess-form button {
+  padding: 0 22px;
+  background: #145a36;
+  border-color: var(--green);
+  font-weight: 700;
+}
+
+.round-over {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: #6e1620;
+  border: 2px solid var(--danger);
+  border-radius: 12px;
+  padding: 12px 18px;
+  text-align: center;
+}
+
+/* ── Editor ─────────────────────────────────────────────────── */
+.editor {
+  background: var(--panel);
+  border: 3px solid var(--gold);
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.editor-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.editor-head h2 {
+  margin: 0;
+  color: var(--gold);
+}
+
+.saved-note {
+  color: var(--green);
+  font-size: 0.85rem;
+}
+
+.editor .empty {
+  color: #ffffff99;
+}
+
+.editor-card {
+  background: #0d1f4d;
+  border: 2px solid #ffffff1a;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.editor-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.answer-row {
+  margin-left: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #ffffffaa;
+}
+
+.field.grow {
+  flex: 1;
+}
+
+.field.points-field {
+  width: 90px;
+}
+
+.field input {
+  background: #16306e;
+  border: 2px solid #ffffff2a;
+  border-radius: 8px;
+  color: var(--text);
+  padding: 9px 10px;
+  font-size: 0.95rem;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.icon-btn {
+  padding: 9px 12px;
+}
+
+.ghost {
+  background: transparent;
+  border-style: dashed;
+}
+
+.danger {
+  background: #6e1620;
+  border-color: var(--danger);
+}
+
+.danger:hover:not(:disabled) {
+  background: #8c1c2a;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
 }
