@@ -10,7 +10,6 @@ export default function Board({ answers, revealed, onReveal, onHide, interactive
           {col.map((answer, j) => {
             const i = c * half + j
             const isOpen = !!revealed[i]
-            // In single-player mode slots only open via correct guesses.
             const clickable = interactive
             return (
               <button
@@ -23,13 +22,14 @@ export default function Board({ answers, revealed, onReveal, onHide, interactive
                 disabled={!clickable && !isOpen}
                 title={clickable ? (isOpen ? 'Click to hide' : 'Click to reveal') : ''}
               >
+                <span className={`slot-num c${i % 6}`}>{i + 1}</span>
                 {isOpen ? (
                   <>
                     <span className="slot-text">{answer.text}</span>
                     <span className="slot-points">{answer.points}</span>
                   </>
                 ) : (
-                  <span className="slot-number">{i + 1}</span>
+                  <span className="slot-dots" aria-hidden="true" />
                 )}
               </button>
             )

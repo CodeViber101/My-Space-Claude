@@ -10,6 +10,8 @@ import SoloBar from './components/SoloBar.jsx'
 import Editor from './components/Editor.jsx'
 import Timer from './components/Timer.jsx'
 import WinModal from './components/WinModal.jsx'
+import Logo from './components/Logo.jsx'
+import Decorations from './components/Decorations.jsx'
 
 const MULTIPLIERS = [1, 2, 3]
 const TARGETS = [200, 300, 500]
@@ -184,8 +186,9 @@ export default function App() {
 
   return (
     <div className="app">
+      <Decorations />
       <header className="topbar">
-        <h1>{t.title}</h1>
+        <Logo />
 
         <div className="toolbar">
           <div className="seg" role="group" aria-label={t.mode}>

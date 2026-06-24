@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 const DURATIONS = [30, 60, 90]
 
 export default function Timer({ t, onExpire }) {
-  const [duration, setDuration] = useState(60)
-  const [remaining, setRemaining] = useState(60)
+  const [duration, setDuration] = useState(30)
+  const [remaining, setRemaining] = useState(30)
   const [running, setRunning] = useState(false)
   const intervalRef = useRef(null)
 
@@ -47,18 +47,24 @@ export default function Timer({ t, onExpire }) {
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, '0')
   const ss = String(remaining % 60).padStart(2, '0')
-  const low = remaining <= 10
+  const low = remaining <= 10 && remaining > 0
   const expired = remaining === 0
+  const pct = Math.max(0, Math.min(100, (remaining / duration) * 100))
 
   return (
     <div className="timer">
-      <div className={`timer-display ${low ? 'low' : ''} ${expired ? 'expired' : ''}`}>
-        {expired ? t.timeUp : `${mm}:${ss}`}
+      <div
+        className={`timer-ring ${low ? 'low' : ''} ${expired ? 'expired' : ''}`}
+        style={{ '--pct': pct }}
+      >
+        <span className="timer-time">{expired ? t.timeUp : `${mm}:${ss}`}</span>
       </div>
       <div className="timer-controls">
-        <button onClick={toggle}>{running ? `⏸ ${t.pause}` : `▶ ${t.start}`}</button>
+        <button className="btn-start" onClick={toggle}>
+          {running ? `⏸ ${t.pause}` : `▶ ${t.start}`}
+        </button>
         <button onClick={reset}>↺ {t.reset}</button>
-        <div className="timer-durations">
+        <div className="timer-durations seg-pills">
           {DURATIONS.map((d) => (
             <button
               key={d}

@@ -1,12 +1,14 @@
 export default function TeamPanel({ t, team, pool, onAward, onChange, side }) {
   return (
     <aside className={`team team-${side}`}>
-      <input
-        className="team-name"
-        value={team.name}
-        onChange={(e) => onChange({ name: e.target.value })}
-        aria-label={t.teamName}
-      />
+      <div className={`team-pill pill-${side}`}>
+        <input
+          className="team-name"
+          value={team.name}
+          onChange={(e) => onChange({ name: e.target.value })}
+          aria-label={t.teamName}
+        />
+      </div>
       <div className="team-score">{team.score}</div>
       <button className="award" onClick={onAward} disabled={pool === 0}>
         + {t.award} ({pool})
