@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { strings } from './i18n.js'
 import { loadQuestions, saveQuestions, resetQuestions } from './store.js'
 import { matchAnswer } from './match.js'
-import { playDing, playBuzzer, playReveal } from './sound.js'
+import { playDing, playBuzzer, playDrumRoll } from './sound.js'
 import Board from './components/Board.jsx'
 import TeamPanel from './components/TeamPanel.jsx'
 import StrikeBar from './components/StrikeBar.jsx'
@@ -107,7 +107,7 @@ export default function App() {
   function reveal(i) {
     if (revealed[i]) return
     setRevealed((r) => ({ ...r, [i]: true }))
-    if (soundOn) playReveal()
+    if (soundOn) playDrumRoll()
   }
 
   function hide(i) {
@@ -346,8 +346,6 @@ export default function App() {
               />
             )}
           </main>
-
-          <footer className="hint">{mode === 'host' ? t.hintHost : t.hintSolo}</footer>
         </>
       )}
 

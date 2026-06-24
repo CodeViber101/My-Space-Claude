@@ -28,10 +28,6 @@ export const strings = {
     soloScore: 'Score',
     roundOver: '3 strikes — round over! Reveal the rest or start a new question.',
     nextQuestion: 'Next question',
-    hintHost:
-      'Host tool · Click an answer slot to reveal it · Use “Strike” for wrong guesses · Award the pool to the team that wins the round.',
-    hintSolo:
-      'Single player · Type a guess and press Enter · Correct answers reveal automatically · A wrong guess is a strike (3 max).',
     // Editor
     editorTitle: 'Question Editor',
     addQuestion: 'Add question',
@@ -85,10 +81,6 @@ export const strings = {
     soloScore: 'Skor',
     roundOver: '3 kali salah — ronde selesai! Buka sisanya atau ganti soal.',
     nextQuestion: 'Soal berikutnya',
-    hintHost:
-      'Mode pembawa acara · Klik kotak jawaban untuk membukanya · Gunakan “Salah” untuk jawaban keliru · Berikan poin ke tim pemenang ronde.',
-    hintSolo:
-      'Pemain tunggal · Ketik jawaban lalu tekan Enter · Jawaban benar terbuka otomatis · Jawaban salah dihitung sebagai strike (maks 3).',
     // Editor
     editorTitle: 'Editor Soal',
     addQuestion: 'Tambah soal',

@@ -45,3 +45,49 @@ export function playBuzzer() {
 export function playReveal() {
   tone({ freq: 660, duration: 0.1, type: 'square', gain: 0.14 })
 }
+
+// Build a buffer of white noise (used for the drum roll).
+function noiseBuffer(ac, duration) {
+  const len = Math.max(1, Math.floor(ac.sampleRate * duration))
+  const buf = ac.createBuffer(1, len, ac.sampleRate)
+  const data = buf.getChannelData(0)
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1
+  return buf
+}
+
+// A short snare-style drum roll that crescendos into a bright accent —
+// played when an answer is revealed.
+export function playDrumRoll() {
+  const ac = getCtx()
+  if (!ac) return
+  const t0 = ac.currentTime
+  const roll = 0.6
+
+  // White-noise source shaped by a bandpass filter to sound like a snare.
+  const src = ac.createBufferSource()
+  src.buffer = noiseBuffer(ac, roll + 0.3)
+  const band = ac.createBiquadFilter()
+  band.type = 'bandpass'
+  band.frequency.value = 1900
+  band.Q.value = 0.7
+  const g = ac.createGain()
+  g.gain.setValueAtTime(0.0001, t0)
+  src.connect(band).connect(g).connect(ac.destination)
+
+  // Rapid taps that get louder toward the end (the "roll").
+  const taps = 24
+  for (let i = 0; i < taps; i++) {
+    const frac = i / taps
+    const t = t0 + frac * roll
+    const amp = 0.03 + frac * 0.14
+    g.gain.setValueAtTime(amp, t)
+    g.gain.exponentialRampToValueAtTime(0.001, t + (roll / taps) * 0.85)
+  }
+  src.start(t0)
+  src.stop(t0 + roll + 0.1)
+
+  // Bright two-note accent right as the roll finishes — the reveal "ta-da".
+  tone({ freq: 880, start: roll, duration: 0.12, type: 'triangle', gain: 0.26 })
+  tone({ freq: 1318, start: roll + 0.1, duration: 0.26, type: 'triangle', gain: 0.26 })
+}
+
