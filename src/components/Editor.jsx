@@ -1,4 +1,67 @@
-export default function Editor({ t, questions, onChange, onReset }) {
+import { useRef, useState } from 'react'
+
+export default function Editor({ t, lang, questions, onChange, onReset }) {
+  const fileRef = useRef(null)
+  const [copied, setCopied] = useState(false)
+
+  function exportJson() {
+    const blob = new Blob([JSON.stringify(questions, null, 2)], {
+      type: 'application/json',
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `family100-questions-${lang}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function copyJson() {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(questions, null, 2))
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // clipboard may be blocked; export remains available
+    }
+  }
+
+  function isValidSet(data) {
+    return (
+      Array.isArray(data) &&
+      data.every(
+        (q) =>
+          q &&
+          typeof q.question === 'string' &&
+          Array.isArray(q.answers) &&
+          q.answers.every(
+            (a) => a && typeof a.text === 'string' && typeof a.points === 'number',
+          ),
+      )
+    )
+  }
+
+  function importJson(e) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // allow re-importing the same file later
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result)
+        if (!isValidSet(data)) {
+          alert(t.importError)
+          return
+        }
+        if (questions.length > 0 && !confirm(t.importConfirm)) return
+        onChange(data)
+      } catch {
+        alert(t.importError)
+      }
+    }
+    reader.readAsText(file)
+  }
+
   function updateQuestionText(qi, text) {
     const next = clone(questions)
     next[qi].question = text
@@ -41,6 +104,19 @@ export default function Editor({ t, questions, onChange, onReset }) {
       <div className="editor-head">
         <h2>{t.editorTitle}</h2>
         <span className="saved-note">✓ {t.saved}</span>
+      </div>
+
+      <div className="editor-io">
+        <button onClick={exportJson}>⬇ {t.export}</button>
+        <button onClick={copyJson}>{copied ? `✓ ${t.copied}` : `⧉ ${t.copyJson}`}</button>
+        <button onClick={() => fileRef.current?.click()}>⬆ {t.import}</button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/json,.json"
+          onChange={importJson}
+          hidden
+        />
       </div>
 
       {questions.length === 0 && <p className="empty">{t.noQuestions}</p>}

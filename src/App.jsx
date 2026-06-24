@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { strings } from './i18n.js'
 import { loadQuestions, saveQuestions, resetQuestions } from './store.js'
 import { matchAnswer } from './match.js'
@@ -8,8 +8,11 @@ import TeamPanel from './components/TeamPanel.jsx'
 import StrikeBar from './components/StrikeBar.jsx'
 import SoloBar from './components/SoloBar.jsx'
 import Editor from './components/Editor.jsx'
+import Timer from './components/Timer.jsx'
+import WinModal from './components/WinModal.jsx'
 
 const MULTIPLIERS = [1, 2, 3]
+const TARGETS = [200, 300, 500]
 
 export default function App() {
   const [lang, setLang] = useState('en')
@@ -29,6 +32,10 @@ export default function App() {
     { name: 'Team 1', score: 0 },
     { name: 'Team 2', score: 0 },
   ])
+  const [targetScore, setTargetScore] = useState(300)
+  const [winner, setWinner] = useState(null) // { type, name?, score }
+  const hostCelebrated = useRef(false)
+  const soloCelebrated = useRef(false)
 
   const t = strings[lang]
 
@@ -65,6 +72,36 @@ export default function App() {
     setStrikes(0)
     setMultiplier(1)
     setSoloScore(0)
+    soloCelebrated.current = false
+    setWinner(null)
+  }
+
+  // Win when a team passes the target score (host mode).
+  useEffect(() => {
+    if (mode !== 'host' || editing || hostCelebrated.current) return
+    const w = teams.find((tm) => tm.score >= targetScore)
+    if (w) {
+      hostCelebrated.current = true
+      setWinner({ type: 'host', name: w.name, score: w.score })
+      if (soundOn) playDing()
+    }
+  }, [teams, targetScore, mode, editing, soundOn])
+
+  // Celebrate a cleared board (solo mode).
+  useEffect(() => {
+    if (mode !== 'solo' || editing || soloCelebrated.current) return
+    const ans = current.answers
+    if (ans.length > 0 && ans.every((_, i) => revealed[i])) {
+      soloCelebrated.current = true
+      setWinner({ type: 'solo', score: soloScore })
+      if (soundOn) playDing()
+    }
+  }, [revealed, current, mode, editing, soloScore, soundOn])
+
+  function newGame() {
+    setTeams((arr) => arr.map((tm) => ({ ...tm, score: 0 })))
+    hostCelebrated.current = false
+    clearRound()
   }
 
   function reveal(i) {
@@ -199,6 +236,7 @@ export default function App() {
       {editing ? (
         <Editor
           t={t}
+          lang={lang}
           questions={questionSet}
           onChange={handleEditorChange}
           onReset={handleEditorReset}
@@ -246,6 +284,8 @@ export default function App() {
 
               <StrikeBar strikes={strikes} flash={flashStrike} />
 
+              <Timer t={t} onExpire={() => addStrike()} />
+
               {mode === 'host' ? (
                 <div className="controls">
                   <div className="pool">
@@ -268,6 +308,20 @@ export default function App() {
                     </button>
                     <button onClick={revealAll}>{t.revealAll}</button>
                     <button onClick={clearRound}>{t.resetRound}</button>
+                  </div>
+                  <div className="target">
+                    {t.target}:
+                    <div className="target-options">
+                      {TARGETS.map((tg) => (
+                        <button
+                          key={tg}
+                          className={targetScore === tg ? 'active' : ''}
+                          onClick={() => setTargetScore(tg)}
+                        >
+                          {tg}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -295,6 +349,21 @@ export default function App() {
 
           <footer className="hint">{mode === 'host' ? t.hintHost : t.hintSolo}</footer>
         </>
+      )}
+
+      {winner && (
+        <WinModal
+          t={t}
+          title={
+            winner.type === 'host' ? `${winner.name} ${t.winner}` : t.perfectRound
+          }
+          subtitle={`${t.soloScore}: ${winner.score}`}
+          onNewGame={() => {
+            if (winner.type === 'host') newGame()
+            else changeQuestion(qIndex + 1)
+          }}
+          onClose={() => setWinner(null)}
+        />
       )}
     </div>
   )

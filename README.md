@@ -22,6 +22,13 @@ question editor.
 - ✎ **Question editor** — add / edit / delete questions and answers in the
   browser; changes are saved to `localStorage` per language, with a
   reset-to-defaults option.
+- ⏱ **Round timer** — 30 / 60 / 90-second countdown with start / pause / reset.
+  It turns red in the final 10 seconds and counts as a strike when it expires.
+- 🏆 **Win screen** — set a target score (200 / 300 / 500); when a team passes it
+  a celebration modal appears with a New Game reset. Solo mode celebrates a fully
+  cleared board.
+- ⬇⬆ **Export / import** — download your question set as JSON (or copy it), and
+  import a JSON file to share custom sets between devices.
 
 ## How to play (host)
 
